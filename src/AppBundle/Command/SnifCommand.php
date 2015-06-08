@@ -14,10 +14,7 @@ class SnifCommand extends ContainerAwareCommand
     {
         $this
             ->setName('import:snif')
-            ->setDescription('Saluer une personne')
-            ->addArgument('name', InputArgument::OPTIONAL, 'Qui voulez vous saluer??')
-            ->addOption('yell', null, InputOption::VALUE_NONE, 'Si définie, la tâche criera en majuscules')
-        ;
+            ->setDescription('Import firm');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
