@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use AppBundle\Entity\Company;
 use AppBundle\Entity\City;
+use AppBundle\Entity\CompanyMetier;
 
 class SnifCommand extends ContainerAwareCommand
 {
@@ -41,6 +42,8 @@ class SnifCommand extends ContainerAwareCommand
 
       $oEntityManager = $this->getContainer()->get('doctrine')->getEntityManager();
 
+      $oMetier = $oEntityManager->getRepository('AppBundle:Metier')->findOneByName('pintor');
+
       foreach ($aNames[1] as $iIndex => $sName) {
 
         $aAddressExp = explode("<br/>", $aAddress[1][$iIndex]);
@@ -66,6 +69,12 @@ class SnifCommand extends ContainerAwareCommand
         $oCompany->setCity($oCity);
         $oCompany->setPhone(\str_replace(" ", "", $aPhones[1][$iIndex]));
         $oEntityManager->persist($oCompany);
+
+        $oCompanyMetier = new CompanyMetier();
+        $oCompanyMetier->setCompany($oCompany);
+        $oCompanyMetier->setMetier($oMetier);
+        $oEntityManager->persist($oCompanyMetier);
+
         $oEntityManager->flush();
       }
 

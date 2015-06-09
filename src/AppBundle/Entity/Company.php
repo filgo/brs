@@ -37,6 +37,10 @@ class Company
      */
     protected $city;
 
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\CompanyMetier", mappedBy="company")
+     */
+    protected $company_metier;
 
     /**
      * Get id
@@ -133,10 +137,50 @@ class Company
     /**
      * Get phone
      *
-     * @return string 
+     * @return string
      */
     public function getPhone()
     {
         return $this->phone;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->company_metier = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add company_metier
+     *
+     * @param \AppBundle\Entity\CompanyMetier $companyMetier
+     * @return Company
+     */
+    public function addCompanyMetier(\AppBundle\Entity\CompanyMetier $companyMetier)
+    {
+        $this->company_metier[] = $companyMetier;
+
+        return $this;
+    }
+
+    /**
+     * Remove company_metier
+     *
+     * @param \AppBundle\Entity\CompanyMetier $companyMetier
+     */
+    public function removeCompanyMetier(\AppBundle\Entity\CompanyMetier $companyMetier)
+    {
+        $this->company_metier->removeElement($companyMetier);
+    }
+
+    /**
+     * Get company_metier
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCompanyMetier()
+    {
+        return $this->company_metier;
     }
 }
