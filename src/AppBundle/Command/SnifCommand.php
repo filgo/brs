@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use AppBundle\Entity\Company;
 
 class SnifCommand extends ContainerAwareCommand
 {
@@ -19,7 +20,9 @@ class SnifCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-      $sURL = 'http://www'.$shost.'.pt/q/business/advanced/what/pintor/?contentErrorLinkEnabled=true';
+      $shost = 'pai';
+
+      $sURL = 'http://www.'.$shost.'.pt/q/business/advanced/what/pintor/?contentErrorLinkEnabled=true';
       $oCurl = curl_init();
       curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1);
       curl_setopt($oCurl, CURLOPT_HEADER, 1);
@@ -31,10 +34,22 @@ class SnifCommand extends ContainerAwareCommand
       curl_close($oCurl);
       $body = $this->getResult($resultat);
 
-      preg_match_all('/<span id="listingbase[0-9]" class="result-bn medium"> (.*?)<\/span>/s', $body, $amatches);
+      preg_match_all('/<span id="listingbase[0-9]*" class="result-bn medium"> (.*?)<\/span>/s', $body, $aNames);
+      preg_match_all('/<div class="result-address">(.*?)<\/div>/s', $body, $aAddress);
 
-      print_r($amatches);
-      echo strpos($body, 'listingbase1');
+      $oEntityManager = $this->getContainer()->get('doctrine')->getEntityManager();
+
+      foreach ($aNames[1] as $iIndex => $sName) {
+
+        $sAddress = \str_replace("<br/>", "", $aAddress[1][$iIndex]);
+
+        $oCompany = new Company();
+        $oCompany->setName($sName);
+        $oCompany->setAddress($sAddress);
+        $oEntityManager->persist($oCompany);
+        $oEntityManager->flush();
+      }
+
       $output->writeln('');
     }
 
