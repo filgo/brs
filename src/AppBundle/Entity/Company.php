@@ -27,6 +27,11 @@ class Company
     private $address;
 
     /**
+     * @ORM\Column(type="string", length=100)
+     */
+    private $phone;
+
+    /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\City", inversedBy="companies")
      * @ORM\JoinColumn(name="fk_city_id", referencedColumnName="id")
      */
@@ -105,10 +110,33 @@ class Company
     /**
      * Get city
      *
-     * @return \AppBundle\Entity\City 
+     * @return \AppBundle\Entity\City
      */
     public function getCity()
     {
         return $this->city;
+    }
+
+    /**
+     * Set phone
+     *
+     * @param string $phone
+     * @return Company
+     */
+    public function setPhone($phone)
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    /**
+     * Get phone
+     *
+     * @return string 
+     */
+    public function getPhone()
+    {
+        return $this->phone;
     }
 }

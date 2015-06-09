@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use AppBundle\Entity\Company;
+use AppBundle\Entity\City;
 
 class SnifCommand extends ContainerAwareCommand
 {
@@ -36,21 +37,39 @@ class SnifCommand extends ContainerAwareCommand
 
       preg_match_all('/<span id="listingbase[0-9]*" class="result-bn medium"> (.*?)<\/span>/s', $body, $aNames);
       preg_match_all('/<div class="result-address">(.*?)<\/div>/s', $body, $aAddress);
+      preg_match_all('/<span class="phone-number">(.*?)<\/span>/s', $body, $aPhones);
 
       $oEntityManager = $this->getContainer()->get('doctrine')->getEntityManager();
 
       foreach ($aNames[1] as $iIndex => $sName) {
 
-        $sAddress = \str_replace("<br/>", "", $aAddress[1][$iIndex]);
+        $aAddressExp = explode("<br/>", $aAddress[1][$iIndex]);
+
+        preg_match_all('/([0-9][0-9][0-9][0-9]\-[0-9][0-9][0-9])(.*)/', $aAddressExp[1], $aAddressDetail);
+
+        $sCp = $aAddressDetail[1][0];
+        $sCityName = substr($aAddressDetail[2][0], 1);
+
+        $oCity = $oEntityManager->getRepository('AppBundle:City')->findOneByPostalCode($sCp);
+
+        if(! $oCity instanceof City)
+        {
+          $oCity = new City();
+          $oCity->setName($sCityName);
+          $oCity->setPostalCode($sCp);
+          $oEntityManager->persist($oCity);
+        }
 
         $oCompany = new Company();
         $oCompany->setName($sName);
-        $oCompany->setAddress($sAddress);
+        $oCompany->setAddress($aAddressExp[0]);
+        $oCompany->setCity($oCity);
+        $oCompany->setPhone(\str_replace(" ", "", $aPhones[1][$iIndex]));
         $oEntityManager->persist($oCompany);
         $oEntityManager->flush();
       }
 
-      $output->writeln('');
+      $output->writeln('done');
     }
 
     private function getResult($resultat)
