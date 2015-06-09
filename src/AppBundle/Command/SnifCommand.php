@@ -10,52 +10,77 @@ use Symfony\Component\Console\Output\OutputInterface;
 use AppBundle\Entity\Company;
 use AppBundle\Entity\City;
 use AppBundle\Entity\CompanyMetier;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 
 class SnifCommand extends ContainerAwareCommand
 {
-    protected function configure()
-    {
-        $this
-            ->setName('import:snif')
-            ->setDescription('Import firm');
-    }
+  protected function configure()
+  {
+    $this->setName('import:snif')->setDescription('Import firm');
+  }
+  protected function execute(InputInterface $input, OutputInterface $output)
+  {
+    $shost = 'pai';
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    for($page = 1;; $page ++)
     {
-      $shost = 'pai';
-
-      $sURL = 'http://www.'.$shost.'.pt/q/business/advanced/what/pintor/?contentErrorLinkEnabled=true';
+      $sURL = 'http://www.' . $shost .'.pt/q/ajax/business?contentErrorLinkEnabled=true&input=pintor&what=pintor&resultlisttype=A_AND_B&page='.$page;
       $oCurl = curl_init();
       curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1);
       curl_setopt($oCurl, CURLOPT_HEADER, 1);
       curl_setopt($oCurl, CURLOPT_URL, $sURL);
-      //curl_setopt($oCurl, CURLOPT_POST, 2);
-      //curl_setopt($oCurl, CURLOPT_POSTFIELDS, 'user=qpro&password=AAIUaI');
+      // curl_setopt($oCurl, CURLOPT_POST, 2);
+      // curl_setopt($oCurl, CURLOPT_POSTFIELDS, 'user=qpro&password=AAIUaI');
 
-      $resultat = curl_exec ($oCurl);
+      $resultat = curl_exec($oCurl);
       curl_close($oCurl);
       $body = $this->getResult($resultat);
 
-      preg_match_all('/<span id="listingbase[0-9]*" class="result-bn medium"> (.*?)<\/span>/s', $body, $aNames);
-      preg_match_all('/<div class="result-address">(.*?)<\/div>/s', $body, $aAddress);
-      preg_match_all('/<span class="phone-number">(.*?)<\/span>/s', $body, $aPhones);
+      $encoders = array(
+          new JsonEncoder()
+      );
+      $normalizers = array(
+          new GetSetMethodNormalizer()
+      );
+
+      $serializer = new Serializer($normalizers, $encoders);
+
+      $aDeserialized = $serializer->decode($body, 'json');
 
       $oEntityManager = $this->getContainer()->get('doctrine')->getEntityManager();
 
       $oMetier = $oEntityManager->getRepository('AppBundle:Metier')->findOneByName('pintor');
 
-      foreach ($aNames[1] as $iIndex => $sName) {
+      if(!isset($aDeserialized['data']['flyouts']))
+      {
+        break;
+      }
 
-        $aAddressExp = explode("<br/>", $aAddress[1][$iIndex]);
+      foreach ( $aDeserialized['data']['flyouts'] as $iIndex => $aInfos )
+      {
+        $sAddress = '';
+        $sCp = '';
+        $sCityName = '';
 
-        preg_match_all('/([0-9][0-9][0-9][0-9]\-[0-9][0-9][0-9])(.*)/', $aAddressExp[1], $aAddressDetail);
+        if($aInfos['address'] != '')
+        {
+          $aAddressExp = explode("<br/>", $aInfos['address']);
 
-        $sCp = $aAddressDetail[1][0];
-        $sCityName = substr($aAddressDetail[2][0], 1);
+          preg_match_all('/([0-9][0-9][0-9][0-9]\-[0-9][0-9][0-9])(.*)/', $aAddressExp[1], $aAddressDetail);
 
+          $sAddress = $aAddressExp[0];
+          if($aAddressDetail[1])
+          {
+            $sCp = $aAddressDetail[1][0];
+            $sCityName = substr($aAddressDetail[2][0], 1);
+          }
+        }
         $oCity = $oEntityManager->getRepository('AppBundle:City')->findOneByPostalCode($sCp);
 
-        if(! $oCity instanceof City)
+        if (! $oCity instanceof City && $sCityName != '')
         {
           $oCity = new City();
           $oCity->setName($sCityName);
@@ -64,10 +89,15 @@ class SnifCommand extends ContainerAwareCommand
         }
 
         $oCompany = new Company();
-        $oCompany->setName($sName);
-        $oCompany->setAddress($aAddressExp[0]);
+        $oCompany->setName($aInfos['name']);
+        $oCompany->setAddress($sAddress);
         $oCompany->setCity($oCity);
-        $oCompany->setPhone(\str_replace(" ", "", $aPhones[1][$iIndex]));
+        $oCompany->setPhone(\str_replace(" ", "", $aInfos['contactDetails']['phone']));
+        $oCompany->setMobile(\str_replace(" ", "", $aInfos['contactDetails']['phone']));
+        $oCompany->setFax(\str_replace(" ", "", $aInfos['contactDetails']['phone']));
+        $oCompany->setSiteAddress($aInfos["website"]["url"]);
+        $oCompany->setLatitude($aInfos['coordinate']['x']);
+        $oCompany->setLongitude($aInfos['coordinate']['y']);
         $oEntityManager->persist($oCompany);
 
         $oCompanyMetier = new CompanyMetier();
@@ -76,15 +106,15 @@ class SnifCommand extends ContainerAwareCommand
         $oEntityManager->persist($oCompanyMetier);
 
         $oEntityManager->flush();
+
+        $output->writeln('Add :' . $aInfos['name']);
       }
-
-      $output->writeln('done');
     }
+  }
+  private function getResult($resultat)
+  {
+    list ($header, $body) = explode("\r\n\r\n", $resultat, 2);
 
-    private function getResult($resultat)
-    {
-      list($header, $body) = explode("\r\n\r\n", $resultat, 2);
-
-      return $body;
-    }
+    return $body;
+  }
 }
