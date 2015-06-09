@@ -27,6 +27,11 @@ class Company
     private $address;
 
     /**
+     * @ORM\Column(type="string", length=300)
+     */
+    private $site_address;
+
+    /**
      * @ORM\Column(type="string", length=100)
      */
     private $phone;
@@ -177,10 +182,33 @@ class Company
     /**
      * Get company_metier
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getCompanyMetier()
     {
         return $this->company_metier;
+    }
+
+    /**
+     * Set site_address
+     *
+     * @param string $siteAddress
+     * @return Company
+     */
+    public function setSiteAddress($siteAddress)
+    {
+        $this->site_address = $siteAddress;
+
+        return $this;
+    }
+
+    /**
+     * Get site_address
+     *
+     * @return string 
+     */
+    public function getSiteAddress()
+    {
+        return $this->site_address;
     }
 }
