@@ -27,6 +27,11 @@ class Company
     private $address;
 
     /**
+     * @ORM\Column(type="string", length=10)
+     */
+    private $cp;
+
+    /**
      * @ORM\Column(type="float", nullable=true)
      */
     private $latitude;
@@ -322,5 +327,28 @@ class Company
     public function getLongitude()
     {
         return $this->longitude;
+    }
+
+    /**
+     * Set cp
+     *
+     * @param string $cp
+     * @return Company
+     */
+    public function setCp($cp)
+    {
+        $this->cp = $cp;
+
+        return $this;
+    }
+
+    /**
+     * Get cp
+     *
+     * @return string 
+     */
+    public function getCp()
+    {
+        return $this->cp;
     }
 }

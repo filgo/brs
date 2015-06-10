@@ -27,7 +27,10 @@ class SnifCommand extends ContainerAwareCommand
 
     for($page = 1;; $page ++)
     {
-      $sURL = 'http://www.' . $shost .'.pt/q/ajax/business?contentErrorLinkEnabled=true&input=pintor&what=pintor&resultlisttype=A_AND_B&page='.$page;
+      $sURL = 'http://www.' . $shost .'.pt/q/ajax/business?contentErrorLinkEnabled=true&input=Pintores%20de%20Constru%C3%A7%C3%A3o%20Civil&what=Pintores%20de%20Constru%C3%A7%C3%A3o%20Civil&where=&type=DOUBLE&resultlisttype=A_AND_B&page='.$page;
+
+      $output->writeln($sURL);
+
       $oCurl = curl_init();
       curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1);
       curl_setopt($oCurl, CURLOPT_HEADER, 1);
@@ -37,6 +40,7 @@ class SnifCommand extends ContainerAwareCommand
 
       $resultat = curl_exec($oCurl);
       curl_close($oCurl);
+
       $body = $this->getResult($resultat);
 
       $encoders = array(
@@ -54,13 +58,14 @@ class SnifCommand extends ContainerAwareCommand
 
       $oMetier = $oEntityManager->getRepository('AppBundle:Metier')->findOneByName('pintor');
 
-      if(!isset($aDeserialized['data']['flyouts']))
+      if(!$aDeserialized['data']['flyouts'])
       {
         break;
       }
 
       foreach ( $aDeserialized['data']['flyouts'] as $iIndex => $aInfos )
       {
+
         $sAddress = '';
         $sCp = '';
         $sCityName = '';
@@ -75,16 +80,31 @@ class SnifCommand extends ContainerAwareCommand
           if($aAddressDetail[1])
           {
             $sCp = $aAddressDetail[1][0];
+            $aCp = explode('-', $sCp);
+            $sCpCity = $aCp[0];
+            $sCpCompany = $sCp;
+
             $sCityName = substr($aAddressDetail[2][0], 1);
           }
         }
-        $oCity = $oEntityManager->getRepository('AppBundle:City')->findOneByPostalCode($sCp);
+        $oCity = $oEntityManager->getRepository('AppBundle:City')->findOneByPostalCode($sCpCity);
+
+
+        $query = $oEntityManager->getRepository('AppBundle:City')->createQueryBuilder('c')
+        ->where('c.postalCode = :cp')
+        ->andwhere('c.name = :name')
+        ->setParameter('cp', $sCpCity)
+        ->setParameter('name', $sCityName)
+        ->getQuery();
+
+        $oCity = $query->getOneOrNullResult();
+
 
         if (! $oCity instanceof City && $sCityName != '')
         {
           $oCity = new City();
           $oCity->setName($sCityName);
-          $oCity->setPostalCode($sCp);
+          $oCity->setPostalCode($sCpCity);
           $oEntityManager->persist($oCity);
         }
 
@@ -92,6 +112,7 @@ class SnifCommand extends ContainerAwareCommand
         $oCompany->setName($aInfos['name']);
         $oCompany->setAddress($sAddress);
         $oCompany->setCity($oCity);
+        $oCompany->setCp($sCpCompany);
         $oCompany->setPhone(\str_replace(" ", "", $aInfos['contactDetails']['phone']));
         $oCompany->setMobile(\str_replace(" ", "", $aInfos['contactDetails']['phone']));
         $oCompany->setFax(\str_replace(" ", "", $aInfos['contactDetails']['phone']));
