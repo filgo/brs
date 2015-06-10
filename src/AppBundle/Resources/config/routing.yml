@@ -1,3 +1,6 @@
-acme_hello:
-     path:  /
-     defaults: { _controller: AppBundle:Static:index }
+index:
+  path:  /
+  defaults: { _controller: AppBundle:Static:index }
+metier_list:
+  path:  /keyword.{_format}
+  defaults: { _controller: AppBundle:Keyword:list }
