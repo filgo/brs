@@ -1,11 +1,33 @@
 $( document ).ready(function() {
     $( "#search_keyword" ).autocomplete({
-      source: "app_dev.php/keyword.json",
+	  source: function(request, response) {
+        $.ajax({
+            url: "keyword.json",
+            dataType: "json",
+            data: {
+                name : request.term,
+            },
+            success: function(data) {
+                response(data);
+            }
+        });
+    },
       minLength: 2,
-      select: function( event, ui ) {
-        log( ui.item ?
-          "Selected: " + ui.item.value + " aka " + ui.item.id :
-          "Nothing selected, input was " + this.value );
-      }
+    });
+    
+    $( "#search_city" ).autocomplete({
+	  source: function(request, response) {
+        $.ajax({
+            url: "cities.json",
+            dataType: "json",
+            data: {
+                name : request.term,
+            },
+            success: function(data) {
+                response(data);
+            }
+        });
+    },
+      minLength: 2,
     });
 })

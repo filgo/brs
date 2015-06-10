@@ -15,13 +15,18 @@ class CityController extends Controller
     {
       $format = $this->getRequest()->getRequestFormat();
 
+      $sCityName = $this->getRequest()->query->get('name');
+
       $aData = array();
 
-      $oLCity = $this->getDoctrine()->getRepository('AppBundle:City')->findAll();
+      $oLCity = $this->getDoctrine()
+        ->getEntityManager()
+        ->getRepository('AppBundle:City')
+        ->findAllByName($sCityName, array('limit' => 5));
 
       foreach ($oLCity as $oCity)
       {
-        $aData[$oCity->getId()] = $oCity->getName();
+        $aData[$oCity->getId()] = $oCity->getName().' ('.$oCity->getPostalCode().')';
       }
 
       return $this->render('AppBundle:City:list.'.$format.'.twig', array('data' => $aData));

@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table()
  * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\CityRepository")
  */
 class City
 {
@@ -129,7 +130,7 @@ class City
     /**
      * Get companies
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getCompanies()
     {

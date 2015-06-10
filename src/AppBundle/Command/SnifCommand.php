@@ -87,8 +87,6 @@ class SnifCommand extends ContainerAwareCommand
             $sCityName = substr($aAddressDetail[2][0], 1);
           }
         }
-        $oCity = $oEntityManager->getRepository('AppBundle:City')->findOneByPostalCode($sCpCity);
-
 
         $query = $oEntityManager->getRepository('AppBundle:City')->createQueryBuilder('c')
         ->where('c.postalCode = :cp')
