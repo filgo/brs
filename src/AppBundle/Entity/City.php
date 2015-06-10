@@ -135,4 +135,27 @@ class City
     {
         return $this->companies;
     }
+
+    /**
+     * Add companies
+     *
+     * @param \AppBundle\Entity\Company $companies
+     * @return City
+     */
+    public function addCompanie(\AppBundle\Entity\Company $companies)
+    {
+        $this->companies[] = $companies;
+    
+        return $this;
+    }
+
+    /**
+     * Remove companies
+     *
+     * @param \AppBundle\Entity\Company $companies
+     */
+    public function removeCompanie(\AppBundle\Entity\Company $companies)
+    {
+        $this->companies->removeElement($companies);
+    }
 }
