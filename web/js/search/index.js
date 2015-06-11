@@ -38,4 +38,11 @@ $( document ).ready(function() {
     },
     minLength: 2,
     });
+    
+    $('#search').submit()
+    {
+    	var url = '{{ path("company_list", {"city": '+'}) }}';
+    	$(this).setAttribute('action', 'baz');
+    }
+    
 })
