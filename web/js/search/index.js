@@ -28,6 +28,14 @@ $( document ).ready(function() {
             }
         });
     },
-      minLength: 2,
+    change: function()
+    {
+    	var sVal = $('#search_city_cp').val();
+    	aRes = sVal.match(/\((.*)\)/);
+    	$('#search_postal_code').val(aRes[1]);
+    	aRes = sVal.match(/(.*) \(/);
+    	$('#search_city').val(aRes[1].toLowerCase());
+    },
+    minLength: 2,
     });
 })
