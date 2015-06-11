@@ -7,3 +7,6 @@ metier_list:
 city_list:
   path:  /cities.{_format}
   defaults: { _controller: AppBundle:City:list }
+company_list:
+  path:  /companies-{city}-{postal_code}.{_format}
+  defaults: { _controller: AppBundle:Company:list }
