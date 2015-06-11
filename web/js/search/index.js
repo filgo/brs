@@ -41,8 +41,8 @@ $( document ).ready(function() {
     
     $('#search').submit()
     {
-    	var url = '{{ path("company_list", {"city": '+'}) }}';
-    	$(this).setAttribute('action', 'baz');
+    	var url = Routing.generate('company_list', {city: $('#search_city').val(), postal_code: $('#search_postal_code').val()})
+    	$(this).attr('action', url);
     }
     
 })
