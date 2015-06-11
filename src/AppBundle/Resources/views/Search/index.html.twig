@@ -1,11 +1,14 @@
 <form id="search" class="form" name="search" method="post" action="">
   <div class="form-group">
     <label>What ?</label>
-    <input type="text" name="search[keyword]" id="search_keyword" class="form-control" required="required">
+    <input type="text" name="search[keyword]" id="search_keyword" class="form-control" required="required" />
   </div>
-                                    
+
+  <input type="hidden" name="search[postal_code]" id="search_postal_code" />
+  <input type="hidden" name="search[city]" id="search_city" />
+
+</form>
   <div class="form-group">
     <label>Where ?</label>
-    <input type="text" name="search[city]" id="search_city" class="form-control" required="required">
+    <input type="text" name="search[city_cp]" id="search_city_cp" class="form-control" required="required" />
   </div>
-</form>
