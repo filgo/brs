@@ -15,7 +15,7 @@ $( document ).ready(function() {
       minLength: 2,
     });
     
-    $( "#search_city" ).autocomplete({
+    $( "#search_city_cp" ).autocomplete({
 	  source: function(request, response) {
         $.ajax({
             url: "cities.json",
