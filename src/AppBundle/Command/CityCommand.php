@@ -28,34 +28,51 @@ class CityCommand extends ContainerAwareCommand
 
     $oEntityManager = $this->getContainer()->get('doctrine')->getEntityManager();
 
+    $i = 0;
+
+    $aExist = array();
+
     while (($data = fgetcsv($handle, 5000, ",")) !== false)
     {
       $output->writeln($data);
 
       $zipCode = explode('-',$data[0]);
 
+      $sName = utf8_encode($data[1]);
+
       $query = $oEntityManager->getRepository('AppBundle:City')->createQueryBuilder('c')
         ->where('c.postalCode = :cp')
-        ->andwhere('c.name = :name')
+        ->andwhere('collate(c.name, utf8_bin) like :name')
         ->setParameter('cp', $zipCode[0])
-        ->setParameter('name', $data[4])
+        ->setParameter('name', $sName)
         ->getQuery();
 
       $oCity = $query->getOneOrNullResult();
 
-      if (! $oCity instanceof City)
+      if (!$oCity instanceof City && !isset($aExist[$zipCode[0]][$sName]))
       {
+        $aExist[$zipCode[0]][$sName] = $sName;
+
         $oCity = new City();
-        $oCity->setName($data[4]);
+        $oCity->setName($sName);
         $oCity->setPostalCode($zipCode[0]);
         $oCity->setLatitude($data[5]);
         $oCity->setLongitude($data[6]);
-      }
 
-      $oEntityManager->persist($oCity);
-      $oEntityManager->flush();
+        $oEntityManager->persist($oCity);
+
+        $i++;
+
+      }
+      if($i%100 == 0)
+      {
+        $oEntityManager->flush();
+        $oEntityManager->clear();
+        $aExist = array();
+      }
     }
 
-
+    $oEntityManager->flush();
+    $oEntityManager->clear();
   }
 }
