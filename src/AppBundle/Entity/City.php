@@ -37,6 +37,20 @@ class City
     private $postalCode;
 
     /**
+     * @var float
+     *
+     * @ORM\Column(name="latitude", type="decimal", scale=8, precision=10)
+     */
+    private $latitude;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="longitude", type="decimal", scale=8, precision=10)
+     */
+    private $longitude;
+
+    /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Company", mappedBy="city")
      */
     protected $companies;
@@ -146,7 +160,7 @@ class City
     public function addCompanie(\AppBundle\Entity\Company $companies)
     {
         $this->companies[] = $companies;
-    
+
         return $this;
     }
 
@@ -158,5 +172,51 @@ class City
     public function removeCompanie(\AppBundle\Entity\Company $companies)
     {
         $this->companies->removeElement($companies);
+    }
+
+    /**
+     * Set latitude
+     *
+     * @param string $latitude
+     * @return City
+     */
+    public function setLatitude($latitude)
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    /**
+     * Get latitude
+     *
+     * @return string
+     */
+    public function getLatitude()
+    {
+        return $this->latitude;
+    }
+
+    /**
+     * Set longitude
+     *
+     * @param string $longitude
+     * @return City
+     */
+    public function setLongitude($longitude)
+    {
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    /**
+     * Get longitude
+     *
+     * @return string
+     */
+    public function getLongitude()
+    {
+        return $this->longitude;
     }
 }
