@@ -16,4 +16,19 @@ class CityRepository extends EntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findByRadius($latitude, $longitude, $radius)
+    {
+      $formuleDistance ="GEO(c.latitude = :latitude, c.longitude = :longitude)";
+
+      return $this
+      ->createQueryBuilder('c')
+      ->where("$formuleDistance < :radius")
+      ->setParameter('latitude', $latitude)
+      ->setParameter('longitude', $longitude)
+      ->setParameter('radius', $radius)
+      ->getQuery()
+      ->getResult();
+    }
+
 }

@@ -45,4 +45,10 @@ $( document ).ready(function() {
     	$(this).attr('action', url);
     }
     
+    
+    $('#submit_search').click(function () {
+    	url = $("#search_keyword").val() + '-' + $("#search_city").val() + '-' + $("#search_postal_code").val()+'.html';
+    	
+    	window.location.href = url;
+    });
 })

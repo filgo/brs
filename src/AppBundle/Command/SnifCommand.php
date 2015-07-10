@@ -90,7 +90,7 @@ class SnifCommand extends ContainerAwareCommand
 
         $query = $oEntityManager->getRepository('AppBundle:City')->createQueryBuilder('c')
         ->where('c.postalCode = :cp')
-        ->andwhere('c.name = :name')
+        ->andwhere('collate(c.name, utf8_bin) = :name')
         ->setParameter('cp', $sCpCity)
         ->setParameter('name', $sCityName)
         ->getQuery();
@@ -103,6 +103,8 @@ class SnifCommand extends ContainerAwareCommand
           $oCity = new City();
           $oCity->setName($sCityName);
           $oCity->setPostalCode($sCpCity);
+          $oCity->setLatitude(0);
+          $oCity->setLongitude(0);
           $oEntityManager->persist($oCity);
         }
 

@@ -14,9 +14,22 @@ class CompanyController extends Controller
     /**
      * @Route("/companies-{city}-{postal_code}.{_format}")
      */
-    public function listAction($city, $postal_code, Request $request)
+    public function listAction($keyword, $city, $postal_code, Request $request)
     {
       $format = $request->getRequestFormat();
+
+
+      $oCity = $this->getDoctrine()->getRepository('AppBundle:City')->createQueryBuilder('c')
+      ->where('c.postalCode = :cp')
+      ->andwhere('collate(LOWER(c.name), utf8_bin) like :name')
+      ->setParameter('cp', $postal_code)
+      ->setParameter('name', $city)
+      ->getQuery()
+      ->getOneOrNullResult();
+
+      $this->getDoctrine()
+      ->getRepository('AppBundle:City')->findByRadius($oCity->getLatitude(), $oCity->getLongitude(), '5');
+
 
       $oLCompany = $this->getDoctrine()
         ->getRepository('AppBundle:Company')
@@ -28,6 +41,8 @@ class CompanyController extends Controller
         ->setParameter('city_postal_code', $postal_code)
         ->getQuery()
         ->getResult();
+
+
 
       return $this->render('AppBundle:Company:list.'.$format.'.twig', array('oLCompany' => $oLCompany));
     }

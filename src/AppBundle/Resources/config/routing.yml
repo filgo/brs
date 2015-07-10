@@ -11,7 +11,7 @@ city_list:
   defaults: { _controller: AppBundle:City:list }
 
 company_list:
-  path:  /companies-{city}-{postal_code}.{_format}
+  path:  /{keyword}-{city}-{postal_code}.{_format}
   defaults: { _controller: AppBundle:Company:list }
   options:
     expose: true
