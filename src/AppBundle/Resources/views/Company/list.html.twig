@@ -13,13 +13,20 @@
 			<p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut <br> et dolore magna aliqua. Ut enim ad minim veniam</p>
 	</div>
 	<div class="row">
-		<div class="col-md-3 col-sm-6">
+		<div class="col-md-12 col-sm-12">
 
-				<ul>
+
           {% for oCompany in oLCompany %}
-						<li>{{ oCompany.name }}</li>
+          	<div class="single-profile-top wow fadeInDown animated">
+						<h4>{{ oCompany.name }}</h4>
+						{% for oLCompanyMetier in oCompany.companyMetier %}
+							<h5>{{ oLCompanyMetier.metier.name }}</h5>
+						{% endfor %}
+						<h5>{{ oCompany.city.name }} {{ oCompany.city.postalCode }}</h5>
+						</div>
+						<br />
           {% endfor %}
-				</ul>
+
 			</div>
 
 	</div>

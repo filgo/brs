@@ -38,17 +38,10 @@ $( document ).ready(function() {
     },
     minLength: 2,
     });
-    
-    $('#search').submit()
-    {
-    	var url = Routing.generate('company_list', {city: $('#search_city').val(), postal_code: $('#search_postal_code').val()})
-    	$(this).attr('action', url);
-    }
-    
-    
+
     $('#submit_search').click(function () {
-    	url = $("#search_keyword").val() + '-' + $("#search_city").val() + '-' + $("#search_postal_code").val()+'.html';
-    	
+    	var url = Routing.generate('company_list', {keyword : $("#search_keyword").val(), city: $('#search_city').val(), postal_code: $('#search_postal_code').val()})+'.html';
+
     	window.location.href = url;
     });
 })

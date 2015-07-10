@@ -27,18 +27,22 @@ class CompanyController extends Controller
       ->getQuery()
       ->getOneOrNullResult();
 
-      $this->getDoctrine()
-      ->getRepository('AppBundle:City')->findByRadius($oCity->getLatitude(), $oCity->getLongitude(), '5');
+      $oLCity = $this->getDoctrine()
+        ->getRepository('AppBundle:City')
+        ->findByRadius($oCity->getLatitude(), $oCity->getLongitude(), '50');
 
+
+        foreach ($oLCity as $oCity)
+        {
+          $aCities[] = $oCity->getId();
+        }
 
       $oLCompany = $this->getDoctrine()
         ->getRepository('AppBundle:Company')
         ->createQueryBuilder('c')
-        ->join('c.city', 'ci')
-        ->where('ci.name like :city_name')
-        ->andWhere('ci.postalCode like :city_postal_code')
-        ->setParameter('city_name', $city)
-        ->setParameter('city_postal_code', $postal_code)
+        ->innerJoin('c.city', 'ci')
+        ->where("ci.id IN(:citiesId)")
+        ->setParameter('citiesId', $aCities)
         ->getQuery()
         ->getResult();
 
