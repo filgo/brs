@@ -48,6 +48,15 @@ class CompanyController extends Controller
 
 
 
-      return $this->render('AppBundle:Company:list.'.$format.'.twig', array('oLCompany' => $oLCompany));
+      return $this->render('AppBundle:Company:list.'.$format.'.twig', array('oLCompany' => $oLCompany, 'keyword' => $keyword, 'city' => $city, 'postal_code' => $postal_code));
+    }
+
+    public function detailAction($name, $id, Request $request)
+    {
+      $format = $request->getRequestFormat();
+
+      $company = $this->getDoctrine()->getRepository('AppBundle:Company')->findOneById($id);
+
+      return $this->render('AppBundle:Company:detail.'.$format.'.twig', array('company' => $company));
     }
 }

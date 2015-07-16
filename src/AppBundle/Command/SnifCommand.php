@@ -65,7 +65,6 @@ class SnifCommand extends ContainerAwareCommand
 
       foreach ( $aDeserialized['data']['flyouts'] as $iIndex => $aInfos )
       {
-
         $sAddress = '';
         $sCp = '';
         $sCityName = '';
@@ -114,8 +113,8 @@ class SnifCommand extends ContainerAwareCommand
         $oCompany->setCity($oCity);
         $oCompany->setCp($sCpCompany);
         $oCompany->setPhone(\str_replace(" ", "", $aInfos['contactDetails']['phone']));
-        $oCompany->setMobile(\str_replace(" ", "", $aInfos['contactDetails']['phone']));
-        $oCompany->setFax(\str_replace(" ", "", $aInfos['contactDetails']['phone']));
+        $oCompany->setMobile(\str_replace(" ", "", $aInfos['contactDetails']['mobile']));
+        $oCompany->setFax(\str_replace(" ", "", $aInfos['contactDetails']['fax']));
         $oCompany->setSiteAddress($aInfos["website"]["url"]);
         $oCompany->setLatitude($aInfos['coordinate']['x']);
         $oCompany->setLongitude($aInfos['coordinate']['y']);

@@ -1,5 +1,9 @@
-index:
+racine:
   path:  /
+  defaults: { _controller: AppBundle:Static:index }
+
+index:
+  path:  /index.html
   defaults: { _controller: AppBundle:Static:index }
 
 metier_list:
@@ -9,6 +13,12 @@ metier_list:
 city_list:
   path:  /cities.{_format}
   defaults: { _controller: AppBundle:City:list }
+
+company_detail:
+  path:  /detail-{name}-{id}.{_format}
+  defaults: { _controller: AppBundle:Company:detail }
+  options:
+    expose: true
 
 company_list:
   path:  /{keyword}-{city}-{postal_code}.{_format}
