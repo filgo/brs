@@ -19,10 +19,17 @@ class CityController extends Controller
 
       $aData = array();
 
+      $options = array();
+
+      if($format == 'json')
+      {
+        $options = array('limit' => 5);
+      }
+
       $oLCity = $this->getDoctrine()
         ->getEntityManager()
         ->getRepository('AppBundle:City')
-        ->findAllByName($sCityName, array('limit' => 5));
+        ->findAllByName($sCityName, $options);
 
       foreach ($oLCity as $oCity)
       {

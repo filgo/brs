@@ -1,0 +1,33 @@
+{% extends 'AppBundle::layout.html.twig' %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+{% endblock %}
+
+{% block section %}
+<section>
+	<div class="container">
+		<div class="center">
+			<h2>A lista de profissoes</h2>
+			<p class="lead">A lista de profissoes que pode procurar</p>
+	</div>
+	<div class="row">
+		<div class="col-md-12 col-sm-12">
+
+
+          {% for metier in lMetier %}
+          	<div class="list-group wow fadeInDown animated col-md-3 col-sm-3">
+							<a href="profissao-{{ metier.name }}-{{ metier.id }}.html" class="list-group-item">
+							  {{ metier.name | upper }}
+							</a>
+						</div>
+						<br />
+          {% endfor %}
+
+			</div>
+
+	</div>
+</div>
+</section>
+{% endblock %}

@@ -18,7 +18,7 @@ $( document ).ready(function() {
     $( "#search_city_cp" ).autocomplete({
 	  source: function(request, response) {
         $.ajax({
-            url: "cities.json",
+            url: "cidades.json",
             dataType: "json",
             data: {
                 name : request.term,

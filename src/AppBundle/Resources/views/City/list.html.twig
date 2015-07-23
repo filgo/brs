@@ -1,0 +1,28 @@
+{% extends 'AppBundle::layout.html.twig' %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+{% endblock %}
+
+{% block section %}
+<section>
+	<div class="container">
+		<div class="center">
+			<h2>As cidades</h2>
+			<p class="lead">A lista de cidades de Portugal</p>
+	</div>
+	<div class="row">
+		<div class="col-md-12 col-sm-12">
+          {% for key_city, city in data %}
+          	<div class="list-group wow fadeInDown animated col-md-3 col-sm-3">
+							<a href="profissao-{{ city }}-{{ key_city }}.html" class="list-group-item">
+							  {{ city | upper }}
+							</a>
+						</div>
+          {% endfor %}
+			</div>
+	</div>
+</div>
+</section>
+{% endblock %}

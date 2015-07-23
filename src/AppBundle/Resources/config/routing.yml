@@ -6,12 +6,12 @@ index:
   path:  /index.html
   defaults: { _controller: AppBundle:Static:index }
 
-metier_list:
+keyword_list:
   path:  /keyword.{_format}
   defaults: { _controller: AppBundle:Keyword:list }
 
 city_list:
-  path:  /cities.{_format}
+  path:  /cidades.{_format}
   defaults: { _controller: AppBundle:City:list }
 
 company_detail:
@@ -25,3 +25,9 @@ company_list:
   defaults: { _controller: AppBundle:Company:list }
   options:
     expose: true
+
+metier_list:
+  path:  /profissoes.{_format}
+  defaults: { _controller: AppBundle:Metier:list }
+  options:
+    expose: true    

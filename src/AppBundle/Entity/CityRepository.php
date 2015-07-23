@@ -7,12 +7,19 @@ class CityRepository extends EntityRepository
 {
     public function findAllByName($sName, $aOptions)
     {
-        return $this
+      $query = $this
             ->createQueryBuilder('c')
             ->where("c.name like :name")
             ->setParameter('name', '%'.$sName.'%')
-            ->orderBy('c.name', 'ASC')
-            ->setMaxResults($aOptions['limit'])
+            ->orderBy('c.name', 'ASC');
+
+        if(isset($aOptions['limit']))
+        {
+          $query->setMaxResults($aOptions['limit']);
+        }
+
+        return $query
+
             ->getQuery()
             ->getResult();
     }
